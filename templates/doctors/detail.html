@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load diagnosis_tags %}
+{% block content %}
+<div class="breadcrumb-bar">
+</div>
+<div class="content">
+			<div class="container">
+
+				<div class="card">
+            <div class="card-body">
+                <div class="doctor-widget">
+                    <div class="doc-info-left">
+                        <div class="doctor-img">
+                            <a href="{% url 'diagnosis:doctor_detail' doctor.id %}">
+                                <img src="{{doctor.photo.url}}" class="img-fluid" alt="User Image">
+                            </a>
+                        </div>
+                        <div class="doc-info-cont">
+                            <h4 class="doc-name"><a href="{% url 'diagnosis:doctor_detail' doctor.id %}">{{doctor.user.get_full_name}}</a></h4>
+                            <p class="doc-speciality">
+                                {% for specialty in doctor.specialties.all %}
+                                    {{ specialty.name }}
+                                {% endfor %}
+                            </p>
+                            <p>{{doctor.phone_number}}</p>
+                            <div class="rating">
+                                {% render_stars doctor.pk %}
+                                <span class="d-inline-block average-rating">({% get_doctor_reviews_count doctor_pk=doctor.pk %})</span>
+                            </div>
+                            <div class="clinic-details">
+                                <p class="doc-location"><i class="fas fa-map-marker-alt"></i> {{doctor.city.name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="doc-info-right">
+                        <div class="clini-infos">
+                            <ul>
+                                <li><i class="far fa-thumbs-up"></i> {% get_doctor_rating doctor_pk=doctor.pk %}</li>
+                                <li><i class="far fa-comment"></i> {% get_doctor_reviews_count doctor_pk=doctor.pk %}</li>
+                                <li><i class="fas fa-map-marker-alt"></i> {{doctor.city.name}}</li>
+                                <li><i class="far fa-money-bill-alt"></i> {{doctor.price}} тг </li>
+                            </ul>
+                        </div>
+						<div class="doctor-action">
+									<a href="mailto:{{doctor.user.email}}" class="btn btn-white fav-btn">
+										<i class="fas fa-envelope"></i>
+									</a>
+									<a href="tel:{{doctor.phone_number}}" class="btn btn-white call-btn">
+										<i class="fas fa-phone"></i>
+									</a>
+									<a href="{% url 'diagnosis:chat_view' doctor.user.id %}" class="btn btn-white msg-btn">
+										<i class="far fa-comment-alt"></i>
+									</a>
+
+								</div>
+                        <div class="clinic-booking">
+                            <a class="apt-btn" href="{% url 'diagnosis:chat_view' doctor.user.id %}">Чат</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+				<div class="card">
+					<div class="card-body pt-0">
+
+						<nav class="user-tabs mb-4">
+							<ul class="nav nav-tabs nav-tabs-bottom nav-justified" role="tablist">
+								<li class="nav-item" role="presentation">
+									<a class="nav-link" href="#doc_overview" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">Обзор</a>
+								</li>
+								<li class="nav-item" role="presentation">
+									<a class="nav-link" href="#doc_locations" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">Записи</a>
+								</li>
+								<li class="nav-item" role="presentation">
+									<a class="nav-link active" href="#doc_reviews" data-bs-toggle="tab" aria-selected="true" role="tab">Отзыв</a>
+								</li>
+
+							</ul>
+						</nav>
+
+
+						<div class="tab-content pt-0">
+
+							<div role="tabpanel" id="doc_overview" class="tab-pane fade">
+								<div class="row">
+									<div class="col-md-12 col-lg-9">
+
+										<div class="widget about-widget">
+											<h4 class="widget-title">Доктор.</h4>
+											<p>{{doctor.about}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div role="tabpanel" id="doc_locations" class="tab-pane fade">
+  <div class="location-list">
+    <div class="row">
+      <div class="card booking-schedule schedule-widget">
+
+        <!-- Dynamic Dates Navigation (if needed) -->
+        <div class="schedule-header">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="day-slot">
+                <ul>
+                  <!-- Insert dynamic left arrow functionality if applicable -->
+                  <li class="left-arrow">
+                    <a href="javascript:void(0)">
+                      <i class="fa fa-chevron-left"></i>
+                    </a>
+                  </li>
+                  <!-- Dynamic Dates Here -->
+                  {% for date, slots in slots.items %}
+                  <li>
+                    <span>{{ date | date:"D" }}</span>
+                    <span class="slot-date">{{ date | date:"d M" }} <small class="slot-year">{{ date | date:"Y" }}</small></span>
+                  </li>
+                  {% endfor %}
+                  <!-- Insert dynamic right arrow functionality if applicable -->
+                  <li class="right-arrow">
+                    <a href="javascript:void(0)">
+                      <i class="fa fa-chevron-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="schedule-cont">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="time-slot">
+                <ul class="clearfix">
+                  {% for date, slots in slots.items %}
+                  <li>
+                    {% for slot in slots %}
+                    <a class="timing" href="{% url 'diagnosis:patient_form' doctor.id %}?date={{ date }}&slot={{ slot }}">
+                      <span>{{ slot }}</span>
+                    </a>
+                    {% endfor %}
+                  </li>
+                  {% empty %}
+                  <li>Нет доступных временных слотов.</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+							<div role="tabpanel" id="doc_reviews" class="tab-pane fade active show">
+
+								<div class="widget review-listing">
+									<ul class="comments-list">
+									{% for rating in ratings %}
+										<li>
+											<div class="comment">
+												<img class="avatar avatar-sm rounded-circle" alt="User Image" src="{% static 'img/patient_logo.png' %}">
+												<div class="comment-body">
+													<div class="meta-data">
+														<span class="comment-author">{{rating.patient.user.username}}</span>
+														<span class="comment-date">{{rating.date}}</span>
+														<div class="review-count rating">
+															{% render_stars_for_detail_page rating.rating %}
+														</div>
+													</div>
+													<p class="comment-content">
+														{{rating.text}}
+													</p>
+													<div class="comment-reply">
+
+
+													</div>
+												</div>
+											</div>
+										</li>
+									{% endfor %}
+
+
+
+
+									</ul>
+
+									<div class="all-feedback text-center">
+
+									</div>
+
+								</div>
+
+
+								<div class="write-review">
+									<h4>Написать отзыв о  <strong>Докторе {{doctor.user.get_full_name}}</strong></h4>
+
+									<form action="{% url 'diagnosis:doctor_detail' doctor.id %}" method="post">
+										{% csrf_token %}
+										<div class="mb-3">
+											<label class="mb-2">Шкала</label>
+											<div class="star-rating">
+												<input id="star-5" type="radio" name="rating" value="5">
+												<label for="star-5" title="5 stars">
+													<i class="active fa fa-star"></i>
+												</label>
+												<input id="star-4" type="radio" name="rating" value="4">
+												<label for="star-4" title="4 stars">
+													<i class="active fa fa-star"></i>
+												</label>
+												<input id="star-3" type="radio" name="rating" value="3">
+												<label for="star-3" title="3 stars">
+													<i class="active fa fa-star"></i>
+												</label>
+												<input id="star-2" type="radio" name="rating" value="2">
+												<label for="star-2" title="2 stars">
+													<i class="active fa fa-star"></i>
+												</label>
+												<input id="star-1" type="radio" name="rating" value="1">
+												<label for="star-1" title="1 star">
+													<i class="active fa fa-star"></i>
+												</label>
+											</div>
+										</div>
+										<div class="mb-3">
+											<label class="mb-2">Ваш отзыв</label>
+											<textarea id="review_desc" maxlength="100" name="text" class="form-control"></textarea>
+											<div class="d-flex justify-content-between mt-3"><small class="text-muted"Осталось ><span id="chars">100</span> символов</small></div>
+										</div>
+										<hr>
+										<div class="mb-3">
+											<div class="terms-accept">
+												<div class="custom-checkbox">
+													<input type="checkbox" id="terms_accept">
+													<label for="terms_accept">Я прочитал и принимаю Условия использования</label>
+												</div>
+											</div>
+										</div>
+										<div class="submit-section">
+											<button type="submit" class="btn btn-primary submit-btn">Добавить отзыв</button>
+										</div>
+									</form>
+
+								</div>
+
+							</div>
+
+
+
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+{% endblock %}

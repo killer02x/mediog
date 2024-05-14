@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+.card-body {
+    animation: float 6s ease-in-out infinite;
+}
+</style>
+
+<div class="container position-absolute top-50 start-50 translate-middle">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-5 mb-5 bg-body rounded">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Регистрация донора</h2>
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="blood_type" class="form-label">Тип крови:</label>
+                            <input type="text" class="form-control" name="blood_type" id="blood_type" required>
+                            <div class="invalid-feedback">
+                                Пожалуйста, введите тип крови.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Возраст:</label>
+                            <input type="number" class="form-control" name="age" id="age" required>
+                            <div class="invalid-feedback">
+                                Пожалуйста, введите ваш возраст.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

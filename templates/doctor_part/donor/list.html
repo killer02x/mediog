@@ -1,0 +1,107 @@
+{% extends 'base_doctor.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .container1 {
+        position: absolute;
+        margin-top: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+    }
+    .donor-request-icon {
+        display: inline-block;
+        float: right;
+        background: url('{% static "img/blood-test (1).png" %}') no-repeat center center;
+        background-size: cover;
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        border: 2px solid #d9534f;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .btn-custom {
+        color: #fff;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    }
+    .btn-custom:hover, .btn-custom:focus {
+        background-color: #c9302c;
+        border-color: #ac2925;
+    }
+    .btn-info-custom {
+        color: #fff;
+        background-color: #5bc0de;
+        border-color: #46b8da;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    }
+    .btn-info-custom:hover, .btn-info-custom:focus {
+        background-color: #31b0d5;
+        border-color: #269abc;
+    }
+</style>
+
+<div class="container1">
+    <a href="{% url 'diagnosis:create_doctor_request' %}" class="btn btn-custom mb-3">Создать заявку на донорство</a>
+    
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-requests-tab" data-bs-toggle="tab" data-bs-target="#all-requests" type="button" role="tab" aria-controls="all-requests" aria-selected="true">Все заявки на донорство</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="my-requests-tab" data-bs-toggle="tab" data-bs-target="#my-requests" type="button" role="tab" aria-controls="my-requests" aria-selected="false">Мои заявки</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="all-requests" role="tabpanel" aria-labelledby="all-requests-tab">
+            <ul class="list-unstyled">
+                {% for request in all_requests %}
+                <li class="mb-3 p-3 shadow rounded">
+                    <span class="donor-request-icon"></span>
+                    <h3>{{ request.title }}</h3>
+                    <p>{{ request.description }}</p>
+                    <p>Количество откликов: {{ request.response_count }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="tab-pane fade" id="my-requests" role="tabpanel" aria-labelledby="my-requests-tab">
+            <ul class="list-unstyled">
+                {% if doctor_own_requests %}
+                {% for request in doctor_own_requests %}
+                <li class="mb-3 p-3 shadow rounded">
+                    <span class="donor-request-icon"></span>
+                    <h3>{{ request.title }}</h3>
+                    <p>{{ request.description }}</p>
+                    <a href="{% url 'diagnosis:delete_doctor_request' request.id %}" class="btn btn-danger" onclick="return confirm('Вы уверены?');">Удалить</a>
+                    <h4>Отклики:</h4>
+                    <ul class="list-unstyled ps-3">
+                        {% for response in request.donorrequest_set.all %}
+                        <li>{{ response.donor_profile.patient.user.get_full_name }} - {{ response.created_at }}<br>
+                        {{ response.donor_profile.patient.email }} - {{ response.donor_profile.patient.phone_number }}</li>
+                        {% empty %}
+                        <li>На эту заявку пока нет откликов.</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Bootstrap's JavaScript needs Popper.js and Bootstrap JS
+    // They should be included in your base template if they are not yet included
+    // Example of including them:
+    // <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    // <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.min.js"></script>
+</script>
+{% endblock %}

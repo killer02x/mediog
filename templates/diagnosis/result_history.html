@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load diagnosis_tags %}
+{% block content %}
+<div class="breadcrumb-bar">
+
+			</div>
+<div class="content" style="transform: none; min-height: 107.24px;">
+				<div class="container" style="transform: none;">
+				{% for diagnosis_history in diagnosis_histories %}
+					<div class="col-lg-8 offset-lg-2">
+						<div class="invoice-content">
+							<div class="invoice-item">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="invoice-logo">
+											<img src="{% static 'img/mediog.png' %}" alt="logo">
+										</div>
+									</div>
+									<div class="col-md-6">
+										<p class="invoice-details">
+											<strong>Запись:</strong> #{{diagnosis_history.appointment.id}}<br>
+                                            <strong>Доктор:</strong> #{{diagnosis_history.user.user.get_full_name}}<br>
+                                            <strong>Дата:</strong> #{{diagnosis_history.date}}<br>
+										</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="invoice-item">
+
+							</div>
+
+							<div class="other-info">
+								<h4>Ваш Запрос</h4>
+								<p class="text-muted mb-0">{{diagnosis_history.patient_text}}</p><br>
+								<h4>Предварительный диагноз</h4>
+								<p class="text-muted mb-0">{{diagnosis_history.text}}</p>
+							</div>
+
+						</div>
+					</div>
+                    {% endfor %}
+					</div>
+				</div>
+{% endblock %}
+
+
+

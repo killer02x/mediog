@@ -1,0 +1,88 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #0de0fe; /* Цвет фона белый */
+            color: #ffffff; /* Цвет текста */
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc; /* Граница снизу */
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            color: #666;
+        }
+        .discussion {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: flex;
+        }
+        .discussion img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .discussion h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Forum</h1>
+        <p>Join the discussion and share your thoughts!</p>
+    </header>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% block discussions %}
+    <!-- discussion_list.html -->
+    {% for discussion in discussions %}
+      <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-bottom: 20px; display: flex;">
+        <div style="flex-shrink: 0; margin-right: 10px;">
+          {% if discussion.photo %}
+            <img src="{{ discussion.photo.url }}" alt="Thumbnail" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;">
+          {% else %}
+            <img alt="Thumbnail" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;">
+          {% endif %}
+        </div>
+        <div>
+          <h2 style="font-size: 20px; color: #333; margin-bottom: 10px;"><a href="{% url 'diagnosis:discussion_detail' pk=discussion.pk %}" style="text-decoration: none; color: #007bff;">{{ discussion.title }}</a></h2>
+          <p style="font-size: 16px; color: #666;">{{ discussion.content }}</p>
+        </div>
+      </div>
+    {% endfor %}
+    {% endblock %}
+</body>
+</html>
